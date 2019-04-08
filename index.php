@@ -1,8 +1,12 @@
 <!--
-* Created by Maria Gallardo
-* @version 1.0
-* Date: 2019-04-04
-* file: index.php
+ Created by Maria Gallardo
+ @version 1.0
+ Date: 2019-04-04
+ URL: http://mgallardo.greenriverdev.com/328/cupcakes/
+
+ This program displays a form  for the user to select cupcake flavors, each cupcake
+ costs $3.50, after the user submits the form their selections is displayed as well as their
+ total.
 -->
 <!doctype html>
 <html lang="en">
@@ -16,39 +20,21 @@
 <body>
 <?php
 
-ini_set('display_errors',1);
-error_reporting(E_ALL);
-
 //Create an array to display menu options in checkboxes, as well as their value
 $flavorsList= array('grasshopper'=>"The Grasshopper",'maple'=>"Whiskey Maple Bacon",'carrot'=>"Carrot Walnut",
     'caramel'=>"Salted Caramel Cupcake",'velvet'=>"Red Velvet", 'lemon'=>'Lemon Drop', 'tiramisu'=>'Tiramisu');
-
-//Create an array to keep track of selected flavors
-$flavorsSelected= array('grasshopper'=>false,'maple'=>false,'carrot'=>false,
-    'caramel'=>false,'velvet'=>false, 'lemon'=>false, 'tiramisu'=>false);
 
 //check if the form has being submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST')
 {
     $name = $_POST['name'];
     $flavors = $_POST['flavors'];
-
-    //update the boolean value in the flavors array if they were selected
-    foreach($flavors as $flavor)
-    {
-        foreach($flavorsSelected as $singleFlavor => $value)
-        {
-            if($flavor == $singleFlavor)
-            {
-                $flavorsSelected[$singleFlavor]=true;
-            }
-        }
-    }
 }
+
 //initialize errors array
  $errors=array();
 
-//check if the user enter tneir name
+//check if the user enter their name
 if(empty($name))
 {
     $errors []= "You forgot to enter your name.";
@@ -63,10 +49,19 @@ if(sizeof($flavors)< 1)
 //display success message if there aren't any errors
 if(empty($errors))
 {
-    echo "Thank you $name, for your order! <br>
-          <br> Order summary:<br><br>
-          ";
+    $total =0;
+    echo "<h2>Thank you $name, for your order!</h2>
+          <h3>Order summary:</h3>
+          <ul>";
+    foreach($flavors as $flavor)
+    {
+        $total+= 3.50;
+        echo "<li>$flavor</li>";
+    }
+    echo "</ul>
+          <p>Order Total: \$$total</p>";
 
+    exit();
 }
 
 //display any errors to the user
@@ -80,18 +75,17 @@ else
 
 ?>
     <h1>Cupcake Fundraiser</h1>
-    <form class="form-container" action=" " method="post">
+    <form action="index.php" method="post">
         <label for="name">Name:</label><br>
         <input type="text" name="name" id="name" placeholder="Please enter your name"
                value="<?php print $name; ?>"><br>
-        <label for="flavors">Cupcake flavors:</label><br><br>
-        <div id="flavors">
+        <p>Cupcake flavors:</p><br><br>
+        <div>
             <?php foreach($flavorsList as $flavor => $value)
             {
                 echo " <input type='checkbox' name='flavors[]' value='$flavor'";
-                    if ($flavorsSelected[$flavor]==true) echo 'checked';
+                    if (in_array($flavor, $flavors)) echo 'checked';
                     echo ">$value<br>";
-
             }
             ?>
         </div>
