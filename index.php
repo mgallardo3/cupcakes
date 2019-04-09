@@ -29,58 +29,70 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 {
     $name = $_POST['name'];
     $flavors = $_POST['flavors'];
-}
 
-//initialize errors array
- $errors=array();
+    //initialize errors array
+    $errors = array();
 
-//check if the user enter their name
-if(empty($name))
-{
-    $errors []= "You forgot to enter your name.";
-}
+    //check if the user enter their name
+    if (empty($name))
+    {
+        $errors [] = "You forgot to enter your name.";
+    }
 
-//prints an error is the user did not pick at least 1 flavor
-if(sizeof($flavors)< 1)
-{
-    $errors[] = "Pick at least one flavor";
-}
+    //prints an error is the user did not pick at least 1 flavor
+    if (sizeof($flavors) < 1)
+    {
+        $errors[] = "Pick at least one flavor";
+    }
 
-//display success message if there aren't any errors
-if(empty($errors))
-{
-    $total =0;
-    echo "<h2>Thank you $name, for your order!</h2>
+    foreach ($flavors as $key)
+    {
+        if(!(array_key_exists($key, $flavorsList)))
+        {
+            $errors[] = "$key is not a valid flavor";
+        }
+    }
+
+
+    //display success message if there aren't any errors
+    if (empty($errors)) {
+        $total = 0;
+        echo "<h2>Thank you $name, for your order!</h2>
           <h3>Order summary:</h3>
           <ul>";
-    foreach($flavors as $flavor)
-    {
-        $total+= 3.50;
-        echo "<li>$flavor</li>";
-    }
-    echo "</ul>
+
+        //display all flavors and total
+        foreach ($flavors as $flavor)
+        {
+            $total += 3.50;
+            echo "<li>$flavor</li>";
+        }
+        echo "</ul>
           <p>Order Total: \$$total</p>";
 
-    exit();
-}
+        exit();
+    }
 
-//display any errors to the user
-else
-{
-    foreach($errors as $errorMessage)
-    {
-        echo " - $errorMessage<br>\n";
+    //display any errors to the user
+    else
+     {
+        foreach ($errors as $errorMessage)
+        {
+            echo " - $errorMessage<br>\n";
+        }
     }
 }
 
+//create the form
 ?>
     <h1>Cupcake Fundraiser</h1>
     <form action="index.php" method="post">
-        <label for="name">Name:</label><br>
+        <label for="name">Your Name:</label><br>
         <input type="text" name="name" id="name" placeholder="Please enter your name"
                value="<?php print $name; ?>"><br>
-        <p>Cupcake flavors:</p><br><br>
+        <p>Cupcake flavors:</p>
         <div>
+            <!--Loop through the flavorList array to print all checkboxes-->
             <?php foreach($flavorsList as $flavor => $value)
             {
                 echo " <input type='checkbox' name='flavors[]' value='$flavor'";
@@ -88,8 +100,8 @@ else
                     echo ">$value<br>";
             }
             ?>
-        </div>
-        <button type="submit" class="btn btn-success btn-block">Place Order</button>
+        </div><br>
+        <input type="submit" value="Order">
     </form>
 
 </body>
